@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Swim Fee Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+    }
+    .logo {
+      height: 60px;
+      width: auto;
+      display: block;
+    }
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 600px;
+      margin: 4em auto;
+      padding: 1em;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.4em;
+    }
+    .intro-line {
+      font-size: 1em;
+      font-weight: bold;
+      color: #333;
+      text-align: center;       /* centers inline content */
+      margin-left: auto;        /* center the block itself */
+      margin-right: auto;
+      width: fit-content;       /* shrink-wrap to content */
+    }
+    .input-row {
+      display: flex;
+      justify-content: center;     /* centers the row horizontally */
+      align-items: flex-start;     /* aligns input-groups to the top */
+      gap: 5rem;                   /* space between input-groups */
+      margin: 2rem auto;           /* auto left/right centers the block itself */
+      width: fit-content;          /* shrink-wrap to contents (so centering works visually) */
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;      /* label above input */
+      align-items: center;         /* center label + input within group */
+    }
+    .input-group input {
+      width: 6ch;                  /* enough for 4 digits comfortably */
+      padding: 0.5em;
+      font-size: 1.1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      text-align: right;           /* optional: aligns number input to the right */
+    }
+    label {
+      margin-bottom: 0.3em;
+      font-weight: 500;
+    }
+    input[type="number"] {
+      padding: 0.5em;
+      font-size: 1.1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 6ch;
+      text-align: center;
+    }
+    .divider {
+      font-size: 1.2em;
+      padding: 0 0.5em;
+      user-select: none;
+    }
+    .result-amount {
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+      margin: 0.5em 0 0.5em;
+    }
+    .result-sentence {
+      font-size: 1.2em;
+      font-weight: bold;
+      text-align: center;
+      margin: 1.5em 0 0.5em;
+    }
+    .explanation {
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="Adelaide-Masters-Swimming-logo.jpg" alt="Adelaide Masters Swimming" class="logo" />
+    <h1>Training Fee Calculator</h1>
+  </div>
+
+  </br>
+  </br>
+
+  <div class="intro-line">Future swims you'd like to pay for:</div>
+
+  <div class="input-row">
+    <div class="input-group">
+      <label for="n1">St Peter's</label>
+      <input type="number" id="n1" min="0" step="1" placeholder="0" inputmode="numeric" />
+    </div>
+    <div class="input-group">
+      <label for="n2">Burnside</label>
+      <input type="number" id="n2" min="0" step="1" placeholder="0" inputmode="numeric" />
+    </div>
+  </div>
+  </br>
+  <div id="result">$0.00</div>
+
+  </br>
+  <div class="explanation" id="explanation1"></div>
+
+  </br>
+  <div class="explanation" id="explanation2"></div>
+
+  <script>
+    const n1Input = document.getElementById("n1");
+    const n2Input = document.getElementById("n2");
+    const resultDisplay = document.getElementById("result");
+
+    const c1 = 12.73; // cost for each St Peters Swim
+    const c2 = 6.82; // cost for each Burnside swim
+
+    function getKFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const kRaw = parseFloat(params.get("k"));
+      return isNaN(kRaw) ? 0 : kRaw;
+    }
+
+    function formatCurrency(value) {
+      return `$${value.toFixed(2)}`;
+    }
+
+    function updateResult() {
+      const n1 = parseFloat(n1Input.value) || 0;
+      const n2 = parseFloat(n2Input.value) || 0;
+      const k = getKFromURL();
+
+      const cost_of_swims = c1 * n1 + c2 * n2;
+
+      const result =  -k + cost_of_swims;
+
+      resultDisplay.classList.remove("result-amount", "result-sentence");
+
+      if (result > 0) {
+        resultDisplay.classList.add("result-amount");
+        resultDisplay.textContent = `Amount to pay: ` + formatCurrency(result);
+
+        explanation1.textContent = `Amount to pay = -(current balance)`
+
+        if (k > 0) {
+          explanation2.textContent = `= -\$${k}`;
+        }
+        else {
+          explanation2.textContent = `= \$${-k}`;
+        }
+
+        if (n1 > 0) {
+          explanation1.textContent += ` + (no. St Peter's swims) x (St Peter's training price)`;
+          explanation2.textContent += ` + ${n1} x \$${c1}`;
+        }
+        if (n2 > 0) {
+          explanation1.textContent += ` + (no. Burnside swims) x (Burnside training price)`;
+          explanation2.textContent += ` + ${n2} x \$${c2}`;
+        }
+
+        if (!n1 && !n2) {
+          explanation2.textContent = ``;
+        }
+      }
+      else if ((n1 == 0) && (n2 == 0)) {
+        resultDisplay.classList.add("result-sentence");
+        resultDisplay.textContent = `Nothing owing, and no new swims to pay for... 🤔`;
+
+        explanation1.textContent = `Your current balance = ` + formatCurrency(k);
+        explanation2.textContent = ``;
+      }
+      else {
+        resultDisplay.classList.add("result-sentence");
+        resultDisplay.textContent = `You already have enough in your balance for that. 🙂`;
+
+        explanation1.textContent = `(Your current balance) ` + formatCurrency(k);
+
+        if (result == 0) {
+          explanation1.textContent += ` = `;
+        }
+        else
+        {
+          explanation1.textContent += ` > `;
+        }
+
+        explanation1.textContent += formatCurrency(cost_of_swims) + ` (Cost of swims)`
+
+        explanation2.textContent = `Cost of swims = `
+
+        if (n1 > 0) {
+          explanation2.textContent += `${n1} x \$${c1}`;
+        }
+
+        if ((n1 > 0) && (n2 > 0)) {
+          explanation2.textContent += ` + `;
+        }
+
+        if (n2 > 0) {
+          explanation2.textContent += `${n2} x \$${c2}`;
+        }
+      }
+    }
+
+    function blockNonDigits(e) {
+      // Allow control keys: Ctrl/Meta + A/C/V/X/Z, arrows, etc.
+      if (
+        e.ctrlKey || e.metaKey ||
+        ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)
+      ) {
+        return;
+      }
+
+      // Block anything that's not a digit
+      if (!/^\d$/.test(e.key)) {
+        e.preventDefault();
+      }
+    }
+
+    function sanitizePaste(e) {
+      const pasted = (e.clipboardData || window.clipboardData).getData('text');
+      if (!/^\d+$/.test(pasted)) {
+        e.preventDefault();
+      }
+    }
+
+    [n1Input, n2Input].forEach(input => {
+      input.addEventListener("keydown", blockNonDigits);
+      input.addEventListener("paste", sanitizePaste);
+      input.addEventListener("input", updateResult);
+    });
+
+    // Initial calculation
+    updateResult();
+  </script>
+</body>
+</html>
