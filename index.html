@@ -119,6 +119,17 @@
       background-color: #24326c; /* AM dark blue */
       border: 1px solid #00a4bd; /* AM light blue */
     }
+
+    @media (max-width: 480px) {
+      .result-wrapper {
+        flex-direction: column;
+        gap: 0.3em;
+      }
+
+      .result-wrapper #copyButton {
+        margin-left: 0;   /* undo default left margin */
+      }
+    }
   </style>
 </head>
 <body>
