@@ -184,9 +184,9 @@
 
       if (result > 0) {
         resultWrapper.classList.add("result-amount");
-        resultDisplay.textContent = `Amount to pay: ` + formatCurrency(result);
+        resultDisplay.textContent = `Total owing: ` + formatCurrency(result);
 
-        explanation1.textContent = `Amount to pay = -(current balance)`;
+        explanation1.textContent = `Total owing = -(current balance)`;
 
         if (k > 0) {
           explanation2.textContent = `= -\$${k}`;
