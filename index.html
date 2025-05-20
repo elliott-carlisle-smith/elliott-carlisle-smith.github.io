@@ -12,7 +12,7 @@
       justify-content: center;
     }
     .logo {
-      height: 60px;
+      height: 100px;
       width: auto;
       display: block;
     }
@@ -79,31 +79,55 @@
       font-size: 2em;
       font-weight: bold;
       text-align: center;
-      margin: 0.5em 0 0.5em;
+      margin: 1.7em 0 0.5em;
     }
     .result-sentence {
       font-size: 1.2em;
       font-weight: bold;
       text-align: center;
-      margin: 1.5em 0 0.5em;
+      margin: 3.4em 0 0.5em;
     }
     .explanation {
       text-align: center;
       font-size: 0.9em;
       color: #666;
     }
+    .result-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5em;
+    }
+    #copyButton {
+      display: none;
+      font-size: 0.6em;
+      line-height: 1;
+      padding: 0 0.2em;
+      height: 2em;
+      align-items: center;
+      justify-content: center;
+      margin-left: 0.5em;
+      cursor: pointer;
+      border-radius: 4px;
+      background-color: #00a4bd; /* AM light blue */
+      border: 1px solid #24326c; /* AM dark blue */
+    }
+    #result-wrapper.result-amount #copyButton {
+      display: inline-flex;
+    }
+    #copyButton:hover {
+      background-color: #24326c; /* AM dark blue */
+      border: 1px solid #00a4bd; /* AM light blue */
+    }
   </style>
 </head>
 <body>
   <div class="header">
     <img src="Adelaide-Masters-Swimming-logo.jpg" alt="Adelaide Masters Swimming" class="logo" />
-    <h1>Training Fee Calculator</h1>
   </div>
-
-  </br>
   </br>
 
-  <div class="intro-line">Future swims you'd like to pay for:</div>
+  <div class="intro-line">Future training you'd like to pay for:</div>
 
   <div class="input-row">
     <div class="input-group">
@@ -115,8 +139,10 @@
       <input type="number" id="n2" min="0" step="1" placeholder="0" inputmode="numeric" />
     </div>
   </div>
-  </br>
-  <div id="result">$0.00</div>
+  <div class="result-wrapper" id="result-wrapper">
+    <div id="result"></div>
+    <button id="copyButton" title="Copy to clipboard">📋</button>
+  </div>
 
   </br>
   <div class="explanation" id="explanation1"></div>
@@ -127,9 +153,13 @@
   <script>
     const n1Input = document.getElementById("n1");
     const n2Input = document.getElementById("n2");
+    const resultWrapper = document.getElementById("result-wrapper");
     const resultDisplay = document.getElementById("result");
+    const explanation1 = document.getElementById("explanation1");
+    const explanation2 = document.getElementById("explanation2");
 
-    const c1 = 12.73; // cost for each St Peters Swim
+
+    const c1 = 12.73; // cost for each St Peter's Swim
     const c2 = 6.82; // cost for each Burnside swim
 
     function getKFromURL() {
@@ -151,13 +181,13 @@
 
       const result =  -k + cost_of_swims;
 
-      resultDisplay.classList.remove("result-amount", "result-sentence");
+      resultWrapper.classList.remove("result-amount", "result-sentence");
 
       if (result > 0) {
-        resultDisplay.classList.add("result-amount");
+        resultWrapper.classList.add("result-amount");
         resultDisplay.textContent = `Amount to pay: ` + formatCurrency(result);
 
-        explanation1.textContent = `Amount to pay = -(current balance)`
+        explanation1.textContent = `Amount to pay = -(current balance)`;
 
         if (k > 0) {
           explanation2.textContent = `= -\$${k}`;
@@ -180,14 +210,14 @@
         }
       }
       else if ((n1 == 0) && (n2 == 0)) {
-        resultDisplay.classList.add("result-sentence");
+        resultWrapper.classList.add("result-sentence");
         resultDisplay.textContent = `Nothing owing, and no new swims to pay for... 🤔`;
 
         explanation1.textContent = `Your current balance = ` + formatCurrency(k);
         explanation2.textContent = ``;
       }
       else {
-        resultDisplay.classList.add("result-sentence");
+        resultWrapper.classList.add("result-sentence");
         resultDisplay.textContent = `You already have enough in your balance for that. 🙂`;
 
         explanation1.textContent = `(Your current balance) ` + formatCurrency(k);
@@ -248,6 +278,25 @@
 
     // Initial calculation
     updateResult();
+
+    document.getElementById("copyButton").addEventListener("click", () => {
+      const resultText = document.getElementById("result").textContent;
+      const match = resultText.match(/\$?\d+(\.\d{2})?/); // finds $12.34 or 12.34
+      if (match) {
+        const valueToCopy = match[0].replace("$", ""); // remove $ if present
+        navigator.clipboard.writeText(valueToCopy).then(() => {
+          const button = document.getElementById("copyButton");
+          const originalText = button.textContent;
+          button.textContent = "✔️";
+          // button.style.color = "0x00a4bd"; // Doesn't work  =(
+          setTimeout(() => button.textContent = originalText, 1000);
+        }).catch(() => {
+          alert("Copy failed");
+        });
+      } else {
+        alert("No amount to copy.");
+      }
+    });
   </script>
 </body>
 </html>
