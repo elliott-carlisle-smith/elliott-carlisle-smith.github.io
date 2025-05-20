@@ -54,7 +54,7 @@
       width: 6ch;                  /* enough for 4 digits comfortably */
       padding: 0.5em;
       font-size: 1.1em;
-      border: 1px solid #ccc;
+      border: 1px solid #00a4bd; /* AM light blue */
       border-radius: 6px;
       text-align: right;           /* optional: aligns number input to the right */
     }
@@ -65,7 +65,7 @@
     input[type="number"] {
       padding: 0.5em;
       font-size: 1.1em;
-      border: 1px solid #ccc;
+      border: 1px solid #00a4bd; /* AM light blue */
       border-radius: 6px;
       width: 6ch;
       text-align: center;
@@ -112,7 +112,7 @@
       background-color: #00a4bd; /* AM light blue */
       border: 1px solid #24326c; /* AM dark blue */
     }
-    #result-wrapper.result-amount #copyButton {
+    .result-wrapper.result-amount #copyButton {
       display: inline-flex;
     }
     #copyButton:hover {
@@ -125,7 +125,7 @@
   <div class="header">
     <img src="Adelaide-Masters-Swimming-logo.jpg" alt="Adelaide Masters Swimming" class="logo" />
   </div>
-  </br>
+  <br />
 
   <div class="intro-line">Future training you'd like to pay for:</div>
 
@@ -144,10 +144,10 @@
     <button id="copyButton" title="Copy to clipboard">📋</button>
   </div>
 
-  </br>
+  <br />
   <div class="explanation" id="explanation1"></div>
 
-  </br>
+  <br />
   <div class="explanation" id="explanation2"></div>
 
   <script>
@@ -158,13 +158,12 @@
     const explanation1 = document.getElementById("explanation1");
     const explanation2 = document.getElementById("explanation2");
 
-
     const c1 = 12.73; // cost for each St Peter's Swim
     const c2 = 6.82; // cost for each Burnside swim
 
     function getKFromURL() {
       const params = new URLSearchParams(window.location.search);
-      const kRaw = parseFloat(params.get("k"));
+      const kRaw = parseFloat(params.get("balance"));
       return isNaN(kRaw) ? 0 : kRaw;
     }
 
