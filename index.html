@@ -109,6 +109,7 @@
       margin-left: 0.5em;
       cursor: pointer;
       border-radius: 4px;
+      color: #24326c; /* AM dark blue */
       background-color: #00a4bd; /* AM light blue */
       border: 1px solid #24326c; /* AM dark blue */
     }
@@ -116,6 +117,7 @@
       display: inline-flex;
     }
     #copyButton:hover {
+      color: #00a4bd; /* AM light blue */
       background-color: #24326c; /* AM dark blue */
       border: 1px solid #00a4bd; /* AM light blue */
     }
@@ -152,7 +154,7 @@
   </div>
   <div class="result-wrapper" id="result-wrapper">
     <div id="result"></div>
-    <button id="copyButton" title="Copy to clipboard">📋</button>
+    <button id="copyButton" title="Copy to clipboard">Copy</button>
   </div>
 
   <br />
@@ -297,7 +299,7 @@
         navigator.clipboard.writeText(valueToCopy).then(() => {
           const button = document.getElementById("copyButton");
           const originalText = button.textContent;
-          button.textContent = "✔️";
+          button.textContent = "Copied!";
           // button.style.color = "0x00a4bd"; // Doesn't work  =(
           setTimeout(() => button.textContent = originalText, 1000);
         }).catch(() => {
