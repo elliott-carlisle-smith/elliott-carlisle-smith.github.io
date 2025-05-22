@@ -108,14 +108,18 @@
       color: var(--AM-dark-blue);
       background-color: var(--AM-light-blue);
       border: 1px solid var(--AM-dark-blue);
+      transition: all 0.2s ease; 
     }
     .result-wrapper.result-amount #copyButton {
       display: inline-flex;
     }
-    #copyButton:hover {
-      color: var(--AM-light-blue);
-      background-color: var(--AM-dark-blue);
-      border: 1px solid var(--AM-light-blue);
+
+    @media (hover: hover) and (pointer: fine) {
+      #copyButton:hover {
+        color: var(--AM-light-blue);
+        background-color: var(--AM-dark-blue);
+        border: 1px solid var(--AM-light-blue);
+      }
     }
 
     /* same as hover */
