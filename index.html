@@ -5,6 +5,10 @@
   <title>Swim Fee Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    :root {
+      --AM-light-blue: #00a4bd;
+      --AM-dark-blue: #24326c;
+    }
     .header {
       display: flex;
       align-items: center;
@@ -54,7 +58,7 @@
       width: 6ch;
       padding: 0.5em;
       font-size: 1.1em;
-      border: 1px solid #00a4bd; /* AM light blue */
+      border: 1px solid var(--AM-light-blue);
       border-radius: 6px;
       text-align: center;
     }
@@ -101,17 +105,24 @@
       margin-left: 0.5em;
       cursor: pointer;
       border-radius: 4px;
-      color: #24326c; /* AM dark blue */
-      background-color: #00a4bd; /* AM light blue */
-      border: 1px solid #24326c; /* AM dark blue */
+      color: var(--AM-dark-blue);
+      background-color: var(--AM-light-blue);
+      border: 1px solid var(--AM-dark-blue);
     }
     .result-wrapper.result-amount #copyButton {
       display: inline-flex;
     }
     #copyButton:hover {
-      color: #00a4bd; /* AM light blue */
-      background-color: #24326c; /* AM dark blue */
-      border: 1px solid #00a4bd; /* AM light blue */
+      color: var(--AM-light-blue);
+      background-color: var(--AM-dark-blue);
+      border: 1px solid var(--AM-light-blue);
+    }
+
+    /* same as hover */
+    #copyButton.copied {
+      color: var(--AM-light-blue);
+      background-color: var(--AM-dark-blue);
+      border: 1px solid var(--AM-light-blue);
     }
 
     @media (max-width: 480px) {
@@ -132,7 +143,7 @@
   </div>
   <br />
 
-  <div class="intro-line">How many future training sessions would you like to pay for?</div>
+  <div class="intro-line">How many future training sessions would you like your account balance to be ready for?</div>
 
   <div class="input-row">
     <div class="input-group">
@@ -146,7 +157,7 @@
   </div>
   <div class="result-wrapper" id="result-wrapper">
     <div id="result"></div>
-    <button id="copyButton" title="Copy total owing amount to clipboard" aria-label="Copy total owing amount to clipboard">Copy</button>
+    <button id="copyButton" title="Copy total owing amount to clipboard" aria-label="Copy total owing amount to clipboard">📋 Copy</button>
   </div>
 
   <br />
@@ -291,9 +302,12 @@
         navigator.clipboard.writeText(valueToCopy).then(() => {
           const button = document.getElementById("copyButton");
           const originalText = button.textContent;
-          button.textContent = "Copied!";
-          // button.style.color = "0x00a4bd"; // Doesn't work  =(
-          setTimeout(() => button.textContent = originalText, 1000);
+          button.textContent = "✓ Copied!";
+          button.classList.add("copied");
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove("copied");
+          }, 1000);
         }).catch(() => {
           alert("Copy failed");
         });
