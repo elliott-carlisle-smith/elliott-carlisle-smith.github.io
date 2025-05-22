@@ -265,6 +265,9 @@
           explanation2.textContent += `${n2} x \$${c2}`;
         }
       }
+
+      localStorage.setItem("n1", n1Input.value);
+      localStorage.setItem("n2", n2Input.value);
     }
 
     function blockNonDigits(e) {
@@ -294,6 +297,12 @@
       input.addEventListener("paste", sanitizePaste);
       input.addEventListener("input", updateResult);
     });
+
+    const savedN1 = localStorage.getItem("n1");
+    const savedN2 = localStorage.getItem("n2");
+
+    if (savedN1 !== null) n1Input.value = savedN1;
+    if (savedN2 !== null) n2Input.value = savedN2;
 
     // Initial calculation
     updateResult();
