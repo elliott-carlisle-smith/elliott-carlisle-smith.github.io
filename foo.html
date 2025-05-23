@@ -2,8 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Swim Fee Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-
+    :root {
+      --AM-light-blue: #00a4bd;
+      --AM-dark-blue: #24326c;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+    }
+    .logo {
+      height: 100px;
+      width: auto;
+      display: block;
+    }
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 600px;
+      margin: 4em auto;
+      padding: 1em;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.4em;
+    }
+    .intro-line {
+      font-size: 1em;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      width: fit-content;
+    }
     .balance-input {
       display: flex;
       justify-content: center;
@@ -11,29 +48,23 @@
       margin-top: 0.5em;
       margin-bottom: 3.5em;
     }
-
    .balance-input input:focus {
       outline: 2px solid black;
-      outline-offset: 2px;
     }
-
-    .input-wrapper {
+    .balance-input-wrapper {
       position: relative;
       display: inline-block;
     }
-
-    .input-wrapper input {
-      padding: 0.5em 0.5em 0.5em 1em;
+    .balance-input-wrapper input {
+      padding: 0.5em 0.5em 0.5em 1em; /* top, right, bottom, left */
       width: 6ch;
       font-size: 1.1em;
       border: 1px solid black;
       border-radius: 6px;
       text-align: center;
       font-family: inherit;
-      /*outline: none;*/ /* remove default blue ring */
     }
-
-    .input-wrapper .dollar-sign {
+    .balance-input-wrapper .dollar-sign {
       position: absolute;
       left: 0.5em;
       top: 50%;
@@ -43,14 +74,216 @@
       pointer-events: none;
       color: #333;
     }
+    .swim-input-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 5rem;
+      margin: 2rem auto;
+      width: fit-content;
+    }
+    .swim-input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .swim-input-group input {
+      width: 6ch;
+      padding: 0.5em;
+      font-size: 1.1em;
+      border: 1px solid var(--AM-light-blue);
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .swim-input-group input:focus {
+      border: 1px solid var(--AM-dark-blue);
+      outline: 2px solid var(--AM-dark-blue);
+    }
+
+    label {
+      margin-bottom: 0.3em;
+      font-weight: 500;
+    }
+    .result-amount {
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+      margin: 1.7em 0 0.5em;
+    }
+    .result-sentence {
+      font-size: 1.2em;
+      font-weight: bold;
+      text-align: center;
+      margin: 3.4em 0 0.5em;
+    }
+    .explanation {
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+    }
+    .result-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5em;
+    }
+    #copyButton {
+      display: none;
+      font-size: 0.6em;
+      line-height: 1;
+      padding: 0 0.2em;
+      height: 2em;
+      align-items: center;
+      justify-content: center;
+      margin-left: 0.5em;
+      cursor: pointer;
+      border-radius: 4px;
+      color: var(--AM-dark-blue);
+      background-color: var(--AM-light-blue);
+      border: 1px solid var(--AM-dark-blue);
+      transition: all 0.2s ease; 
+    }
+    .result-wrapper.result-amount #copyButton {
+      display: inline-flex;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      #copyButton:hover {
+        color: var(--AM-light-blue);
+        background-color: var(--AM-dark-blue);
+        border: 1px solid var(--AM-light-blue);
+      }
+    }
+
+    /* same as hover */
+    #copyButton.copied {
+      color: var(--AM-light-blue);
+      background-color: var(--AM-dark-blue);
+      border: 1px solid var(--AM-light-blue);
+    }
+
+    @media (max-width: 480px) {
+      .result-wrapper {
+        flex-direction: column;
+        gap: 0.3em;
+      }
+
+      .result-wrapper #copyButton {
+        margin-left: 0;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="header">
+    <img src="Adelaide-Masters-Swimming-logo.jpg" alt="Adelaide Masters Swimming" class="logo" />
+  </div>
+  <br />
+  <div class="intro-line">Current balance</div>
+
   <div class="balance-input">
-    <div class="input-wrapper">
+    <div class="balance-input-wrapper">
       <span class="dollar-sign">$</span>
       <input type="text" id="b" inputmode="decimal" placeholder="0.00" autocomplete="off"/>
     </div>
   </div>
+
+  <div class="intro-line">How many future training sessions would you like your account balance to be ready for?</div>
+
+  <div class="swim-input-row">
+    <div class="swim-input-group">
+      <label for="n1">St Peter's</label>
+      <input type="text" id="n1" inputmode="numeric" pattern="[0-9]*" placeholder="# swims" autocomplete="off"/>
+    </div>
+    <div class="swim-input-group">
+      <label for="n2">Burnside</label>
+      <input type="text" id="n2" inputmode="numeric" pattern="[0-9]*" placeholder="# swims" autocomplete="off" />
+    </div>
+  </div>
+  <div class="result-wrapper" id="result-wrapper">
+    <div id="result"></div>
+    <button id="copyButton" title="Copy total owing amount to clipboard" aria-label="Copy total owing amount to clipboard">📋 Copy</button>
+  </div>
+
+  <br />
+  <div class="explanation" id="explanation1"></div>
+
+  <br />
+  <div class="explanation" id="explanation2"></div>
+
+  <script>
+    const bInput = document.getElementById("b");
+    const n1Input = document.getElementById("n1");
+    const n2Input = document.getElementById("n2");
+    const resultWrapper = document.getElementById("result-wrapper");
+    const resultDisplay = document.getElementById("result");
+    const explanation1 = document.getElementById("explanation1");
+    const explanation2 = document.getElementById("explanation2");
+
+    const c1 = 12.73; // cost for each St Peter's Swim
+    const c2 = 6.82; // cost for each Burnside swim
+
+    function initialiseB() {
+      const params = new URLSearchParams(window.location.search);
+
+      const bRaw = parseFloat(params.get("balance"));
+
+      if (!isNaN(bRaw))
+      {
+        localStorage.setItem("b", bRaw);
+      }
+
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    initialiseB();
+
+    function updateResult() {
+
+      localStorage.setItem("b", bInput.value);
+      localStorage.setItem("n1", n1Input.value);
+      localStorage.setItem("n2", n2Input.value);
+    }
+
+    [n1Input, n2Input].forEach(input => {
+      input.addEventListener("input", updateResult);
+    });
+
+    bInput.addEventListener("input", updateResult);
+
+    const savedB = localStorage.getItem("b");
+    const savedN1 = localStorage.getItem("n1");
+    const savedN2 = localStorage.getItem("n2");
+
+    if (savedB !== null) bInput.value = savedB;
+    if (savedN1 !== null) n1Input.value = savedN1;
+    if (savedN2 !== null) n2Input.value = savedN2;
+
+    // Initial calculation
+    updateResult();
+
+    document.getElementById("copyButton").addEventListener("click", () => {
+      const resultText = document.getElementById("result").textContent;
+      const match = resultText.match(/\$?\d+(\.\d{2})?/); // finds $12.34 or 12.34
+      if (match) {
+        const valueToCopy = match[0].replace("$", ""); // remove $ if present
+        navigator.clipboard.writeText(valueToCopy).then(() => {
+          const button = document.getElementById("copyButton");
+          const originalText = button.textContent;
+          button.textContent = "✓ Copied!";
+          button.classList.add("copied");
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove("copied");
+          }, 1000);
+        }).catch(() => {
+          alert("Copy failed");
+        });
+      } else {
+        alert("No amount to copy.");
+      }
+    });
+  </script>
 </body>
 </html>

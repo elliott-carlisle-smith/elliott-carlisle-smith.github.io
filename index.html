@@ -32,17 +32,15 @@
       text-align: center;
       font-size: 2.4em;
     }
-
     .intro-line {
       font-size: 1em;
       font-weight: bold;
       color: #333;
-      text-align: center;       /* centers inline content */
-      margin-left: auto;        /* center the block itself */
+      text-align: center;
+      margin-left: auto;
       margin-right: auto;
-      width: fit-content;       /* shrink-wrap to content */
+      width: fit-content;
     }
-
     .balance-input {
       display: flex;
       justify-content: center;
@@ -50,26 +48,22 @@
       margin-top: 0.5em;
       margin-bottom: 3.5em;
     }
-
    .balance-input input:focus {
       outline: 2px solid black;
     }
-
     .balance-input-wrapper {
       position: relative;
       display: inline-block;
     }
-
     .balance-input-wrapper input {
       padding: 0.5em 0.5em 0.5em 1em; /* top, right, bottom, left */
       width: 6ch;
       font-size: 1.1em;
       border: 1px solid black;
       border-radius: 6px;
-      text-align: center; /* to align text after dollar sign */
+      text-align: center;
       font-family: inherit;
     }
-
     .balance-input-wrapper .dollar-sign {
       position: absolute;
       left: 0.5em;
@@ -80,20 +74,18 @@
       pointer-events: none;
       color: #333;
     }
-
-
     .swim-input-row {
       display: flex;
-      justify-content: center;     /* centers the row horizontally */
-      align-items: flex-start;     /* aligns swim-input-groups to the top */
-      gap: 5rem;                   /* space between swim-input-groups */
-      margin: 2rem auto;           /* auto left/right centers the block itself */
-      width: fit-content;          /* shrink-wrap to contents (so centering works visually) */
+      justify-content: center;
+      align-items: flex-start;
+      gap: 5rem;
+      margin: 2rem auto;
+      width: fit-content;
     }
     .swim-input-group {
       display: flex;
-      flex-direction: column;      /* label above input */
-      align-items: center;         /* center label + input within group */
+      flex-direction: column;
+      align-items: center;
     }
     .swim-input-group input {
       width: 6ch;
@@ -105,18 +97,13 @@
     }
 
     .swim-input-group input:focus {
-      border: 1px solid var(--AM-dark-blue);
-      outline: 2px solid var(--AM-dark-blue);
+      border: 1px solid var(--AM-light-blue);
+      outline: 2px solid var(--AM-light-blue);
     }
 
     label {
       margin-bottom: 0.3em;
       font-weight: 500;
-    }
-    .divider {
-      font-size: 1.2em;
-      padding: 0 0.5em;
-      user-select: none;
     }
     .result-amount {
       font-size: 2em;
@@ -183,7 +170,7 @@
       }
 
       .result-wrapper #copyButton {
-        margin-left: 0;   /* undo default left margin */
+        margin-left: 0;
       }
     }
   </style>
@@ -193,7 +180,7 @@
     <img src="Adelaide-Masters-Swimming-logo.jpg" alt="Adelaide Masters Swimming" class="logo" />
   </div>
   <br />
-  <div class="intro-line">Current balance</div>
+  <div class="intro-line">Current account balance</div>
 
   <div class="balance-input">
     <div class="balance-input-wrapper">
@@ -202,7 +189,7 @@
     </div>
   </div>
 
-  <div class="intro-line">How many future training sessions would you like your account balance to be ready for?</div>
+  <div class="intro-line">How many future training sessions would you<br />like your account balance to be ready for?</div>
 
   <div class="swim-input-row">
     <div class="swim-input-group">
@@ -216,7 +203,7 @@
   </div>
   <div class="result-wrapper" id="result-wrapper">
     <div id="result"></div>
-    <button id="copyButton" title="Copy total owing amount to clipboard" aria-label="Copy total owing amount to clipboard">📋 Copy</button>
+    <button id="copyButton" title="Copy payment due amount to clipboard" aria-label="Copy payment due amount to clipboard">📋 Copy</button>
   </div>
 
   <br />
@@ -237,7 +224,6 @@
     const c1 = 12.73; // cost for each St Peter's Swim
     const c2 = 6.82; // cost for each Burnside swim
 
-
     function initialiseB() {
       const params = new URLSearchParams(window.location.search);
 
@@ -253,6 +239,10 @@
 
     initialiseB();
 
+    function formatCurrency(value) {
+      return `$${value.toFixed(2)}`;
+    }
+
     function updateResult() {
       const b = parseFloat(bInput.value) || 0;
       const n1 = parseFloat(n1Input.value) || 0;
@@ -266,9 +256,9 @@
 
       if (result > 0) {
         resultWrapper.classList.add("result-amount");
-        resultDisplay.textContent = `Total owing: ` + formatCurrency(result);
+        resultDisplay.textContent = `Payment due: ` + formatCurrency(result);
 
-        explanation1.textContent = `Total owing = -(current balance)`;
+        explanation1.textContent = `Payment due = -(current balance)`;
 
         if (b > 0) {
           explanation2.textContent = `= -\$${b}`;
@@ -294,7 +284,7 @@
         resultWrapper.classList.add("result-sentence");
         resultDisplay.textContent = `Nothing owing, and no new swims to pay for... 🤔`;
 
-        explanation1.textContent = `Your current balance = ` + formatCurrency(b);
+        explanation1.textContent = ``;
         explanation2.textContent = ``;
       }
       else {
@@ -377,7 +367,6 @@
       // Block anything else
       e.preventDefault();
     }
-
 
     function sanitizeIntigerPaste(e) {
       const pasted = (e.clipboardData || window.clipboardData).getData('text');
