@@ -225,14 +225,29 @@
       return /^-?\d*(\.\d{0,2})?$/.test(v);
     }
 
+    function formatBalanceInput() {
+      const n = parseFloat(bInput.value);
+
+      const newV = (isNaN(n) || (n === 0)) ? `` : `${n.toFixed(2)}`;
+
+      if (bInput.value !== newV) {
+        bInput.value = newV;
+        sessionStorage.setItem("b", newV);
+      }
+    }
+
     function initialiseB() {
       const params = new URLSearchParams(window.location.search);
 
-      const bRaw = parseFloat(params.get("balance"));
+      const bValue = params.get("balance");
+
+      const bRaw = parseFloat(bValue);
 
       if (!isNaN(bRaw) && valueIsDecimalCurrency(bRaw))
       {
-        sessionStorage.setItem("b", bRaw);
+        bInput.value = bRaw;
+        formatBalanceInput();
+        sessionStorage.setItem("b", bInput.value);
       }
 
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -340,9 +355,7 @@
     }
 
     function blockNonDecimals(e) {
-      const value = e.target.value;
-
-      // Allow control keys
+      // Allow control/meta keys and navigational keys
       if (
         e.ctrlKey || e.metaKey ||
         ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)
@@ -350,29 +363,39 @@
         return;
       }
 
+      const input = e.target;
+      const value = input.value;
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+
+      const leftOfSelection = value.slice(0, start);
+      const rightOfSelection = value.slice(end);
+
+      // Simulate the new value after this keypress
+      const newValue = leftOfSelection + e.key + rightOfSelection;
+
       // Allow digits
       if (/^\d$/.test(e.key)) {
-        // If there's already a decimal, check digits after it
-        const [_, fraction = ''] = value.split('.');
-        if (value.includes('.') && fraction.length >= 2 && e.target.selectionStart > value.indexOf('.')) {
+        const [_, fraction = ''] = newValue.split('.');
+        if (newValue.includes('.') && fraction.length > 2) {
           e.preventDefault(); // block if more than 2 decimal places
         }
         return;
       }
 
-      // Allow one '.'
-      if (e.key === '.' && !value.includes('.')) {
+      // Allow one '.' only if it doesn't already exist (ignoring selected text)
+      if (e.key === '.' && !leftOfSelection.includes('.') && !rightOfSelection.includes('.')) {
         return;
       }
 
-      // Allow '-' only at the beginning and only once
+      // Allow '-' only at beginning and only if not already present
       if (e.key === '-') {
-        if (e.target.selectionStart === 0 && !value.includes('-')) {
+        if (start === 0 && !leftOfSelection.includes('-') && !rightOfSelection.includes('-')) {
           return;
         }
       }
 
-      // Block anything else
+      // Block everything else
       e.preventDefault();
     }
 
@@ -401,15 +424,30 @@
       }
     }
 
+    function dropLeadingZeros(input, key) {
+      const value = input.value;
+
+      const newValue = value.replace(/^0+/, '');
+
+      if (value !== newValue) {
+        input.value = newValue;
+        sessionStorage.setItem(key, newValue);
+      }
+    }
+
     [n1Input, n2Input].forEach(input => {
       input.addEventListener("keydown", blockNonDigits);
       input.addEventListener("paste", sanitiseIntigerPaste);
       input.addEventListener("input", updateResult);
     });
 
+    n1Input.addEventListener('blur', () => dropLeadingZeros(n1Input, "n1"));
+    n2Input.addEventListener('blur', () => dropLeadingZeros(n2Input, "n2"));
+
     bInput.addEventListener("keydown", blockNonDecimals);
     bInput.addEventListener("paste", sanitiseDecimalPaste);
     bInput.addEventListener("input", updateResult);
+    bInput.addEventListener('blur', formatBalanceInput);
 
     const savedB = sessionStorage.getItem("b");
     const savedN1 = sessionStorage.getItem("n1");
