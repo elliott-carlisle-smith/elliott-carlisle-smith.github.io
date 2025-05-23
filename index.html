@@ -28,10 +28,6 @@
       line-height: 1.6;
       color: #333;
     }
-    h1 {
-      text-align: center;
-      font-size: 2.4em;
-    }
     .intro-line {
       font-size: 1em;
       font-weight: bold;
@@ -45,7 +41,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 0.5em;
+      margin-top: 1.2em;
       margin-bottom: 3.5em;
     }
    .balance-input input:focus {
@@ -79,7 +75,7 @@
       justify-content: center;
       align-items: flex-start;
       gap: 5rem;
-      margin: 2rem auto;
+      margin: 1.2rem auto;
       width: fit-content;
     }
     .swim-input-group {
@@ -180,7 +176,7 @@
     <img src="Adelaide-Masters-Swimming-logo.jpg" alt="Adelaide Masters Swimming" class="logo" />
   </div>
   <br />
-  <div class="intro-line">Current account balance</div>
+  <div class="intro-line">Current balance</div>
 
   <div class="balance-input">
     <div class="balance-input-wrapper">
@@ -189,7 +185,7 @@
     </div>
   </div>
 
-  <div class="intro-line">How many future training sessions would you<br />like your account balance to be ready for?</div>
+  <div class="intro-line">Plan for how many sessions?</div>
 
   <div class="swim-input-row">
     <div class="swim-input-group">
@@ -224,14 +220,19 @@
     const c1 = 12.73; // cost for each St Peter's Swim
     const c2 = 6.82; // cost for each Burnside swim
 
+    function valueIsDecimalCurrency(v)
+    {
+      return /^-?\d*(\.\d{0,2})?$/.test(v);
+    }
+
     function initialiseB() {
       const params = new URLSearchParams(window.location.search);
 
       const bRaw = parseFloat(params.get("balance"));
 
-      if (!isNaN(bRaw))
+      if (!isNaN(bRaw) && valueIsDecimalCurrency(bRaw))
       {
-        localStorage.setItem("b", bRaw);
+        sessionStorage.setItem("b", bRaw);
       }
 
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -298,7 +299,7 @@
         }
         else
         {
-          explanation1.textContent += ` > `;
+          explanation1.textContent += ` ＞ `;
         }
 
         explanation1.textContent += formatCurrency(cost_of_swims) + ` (Cost of swims)`;
@@ -318,9 +319,9 @@
         }
       }
 
-      localStorage.setItem("b", bInput.value);
-      localStorage.setItem("n1", n1Input.value);
-      localStorage.setItem("n2", n2Input.value);
+      sessionStorage.setItem("b", bInput.value);
+      sessionStorage.setItem("n1", n1Input.value);
+      sessionStorage.setItem("n2", n2Input.value);
     }
 
     function blockNonDigits(e) {
@@ -364,18 +365,25 @@
         return;
       }
 
+      // Allow '-' only at the beginning and only once
+      if (e.key === '-') {
+        if (e.target.selectionStart === 0 && !value.includes('-')) {
+          return;
+        }
+      }
+
       // Block anything else
       e.preventDefault();
     }
 
-    function sanitizeIntigerPaste(e) {
+    function sanitiseIntigerPaste(e) {
       const pasted = (e.clipboardData || window.clipboardData).getData('text');
       if (!/^\d+$/.test(pasted)) {
         e.preventDefault();
       }
     }
 
-    function sanitizeDecimalPaste(e) {
+    function sanitiseDecimalPaste(e) {
       const pasted = (e.clipboardData || window.clipboardData).getData('text');
 
       // Get current value and cursor position
@@ -386,25 +394,26 @@
       // Simulate the value after paste
       const nextValue = input.value.slice(0, start) + pasted + input.value.slice(end);
 
-      // Validate that result has at most one '.' and up to two decimal places
-      if (!/^\d*(\.\d{0,2})?$/.test(nextValue)) {
+      // Validate that it matches an optional '-' at start, followed by digits,
+      // optionally one '.', and up to 2 decimal digits
+      if (!valueIsDecimalCurrency(nextValue)) {
         e.preventDefault();
       }
     }
 
     [n1Input, n2Input].forEach(input => {
       input.addEventListener("keydown", blockNonDigits);
-      input.addEventListener("paste", sanitizeIntigerPaste);
+      input.addEventListener("paste", sanitiseIntigerPaste);
       input.addEventListener("input", updateResult);
     });
 
     bInput.addEventListener("keydown", blockNonDecimals);
-    bInput.addEventListener("paste", sanitizeDecimalPaste);
+    bInput.addEventListener("paste", sanitiseDecimalPaste);
     bInput.addEventListener("input", updateResult);
 
-    const savedB = localStorage.getItem("b");
-    const savedN1 = localStorage.getItem("n1");
-    const savedN2 = localStorage.getItem("n2");
+    const savedB = sessionStorage.getItem("b");
+    const savedN1 = sessionStorage.getItem("n1");
+    const savedN2 = sessionStorage.getItem("n2");
 
     if (savedB !== null) bInput.value = savedB;
     if (savedN1 !== null) n1Input.value = savedN1;
