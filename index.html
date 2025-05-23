@@ -32,6 +32,7 @@
       text-align: center;
       font-size: 2.4em;
     }
+
     .intro-line {
       font-size: 1em;
       font-weight: bold;
@@ -41,20 +42,52 @@
       margin-right: auto;
       width: fit-content;       /* shrink-wrap to content */
     }
-    .input-row {
+
+    .balance-input {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 0.5em;
+      margin-bottom: 3.5em;
+    }
+    .balance-input input {
+      width: 6ch;
+      padding: 0.5em;
+      font-size: 1.1em;
+      border: 1px solid black;
+      border-radius: 6px;
+      text-align: center;
+      font-family: inherit;
+    }
+
+   .balance-input input:focus {
+      border-color: black;
+    }
+
+    .swim-input-group input:focus {
+      border-color: var(--AM-dark-blue);
+    }
+
+    .dollar-sign {
+      font-size: 1.1em;
+      margin-bottom: 0.3em;
+      margin-right: 0.3em;
+      font-weight: 500;
+    }
+    .swim-input-row {
       display: flex;
       justify-content: center;     /* centers the row horizontally */
-      align-items: flex-start;     /* aligns input-groups to the top */
-      gap: 5rem;                   /* space between input-groups */
+      align-items: flex-start;     /* aligns swim-input-groups to the top */
+      gap: 5rem;                   /* space between swim-input-groups */
       margin: 2rem auto;           /* auto left/right centers the block itself */
       width: fit-content;          /* shrink-wrap to contents (so centering works visually) */
     }
-    .input-group {
+    .swim-input-group {
       display: flex;
       flex-direction: column;      /* label above input */
       align-items: center;         /* center label + input within group */
     }
-    .input-group input {
+    .swim-input-group input {
       width: 6ch;
       padding: 0.5em;
       font-size: 1.1em;
@@ -146,15 +179,21 @@
     <img src="Adelaide-Masters-Swimming-logo.jpg" alt="Adelaide Masters Swimming" class="logo" />
   </div>
   <br />
+  <div class="intro-line">Current balance</div>
+
+  <div class="balance-input">
+    <span class="dollar-sign">$</span>
+    <input type="text" id="b" inputmode="decimal" placeholder="0.00" autocomplete="off"/>
+  </div>
 
   <div class="intro-line">How many future training sessions would you like your account balance to be ready for?</div>
 
-  <div class="input-row">
-    <div class="input-group">
+  <div class="swim-input-row">
+    <div class="swim-input-group">
       <label for="n1">St Peter's</label>
       <input type="text" id="n1" inputmode="numeric" pattern="[0-9]*" placeholder="# swims" autocomplete="off"/>
     </div>
-    <div class="input-group">
+    <div class="swim-input-group">
       <label for="n2">Burnside</label>
       <input type="text" id="n2" inputmode="numeric" pattern="[0-9]*" placeholder="# swims" autocomplete="off" />
     </div>
@@ -171,6 +210,7 @@
   <div class="explanation" id="explanation2"></div>
 
   <script>
+    const bInput = document.getElementById("b");
     const n1Input = document.getElementById("n1");
     const n2Input = document.getElementById("n2");
     const resultWrapper = document.getElementById("result-wrapper");
@@ -181,24 +221,30 @@
     const c1 = 12.73; // cost for each St Peter's Swim
     const c2 = 6.82; // cost for each Burnside swim
 
-    function getKFromURL() {
+
+    function initialiseB() {
       const params = new URLSearchParams(window.location.search);
-      const kRaw = parseFloat(params.get("balance"));
-      return isNaN(kRaw) ? 0 : kRaw;
+
+      const bRaw = parseFloat(params.get("balance"));
+
+      if (!isNaN(bRaw))
+      {
+        localStorage.setItem("b", bRaw);
+      }
+
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-    function formatCurrency(value) {
-      return `$${value.toFixed(2)}`;
-    }
+    initialiseB();
 
     function updateResult() {
+      const b = parseFloat(bInput.value) || 0;
       const n1 = parseFloat(n1Input.value) || 0;
       const n2 = parseFloat(n2Input.value) || 0;
-      const k = getKFromURL();
 
       const cost_of_swims = c1 * n1 + c2 * n2;
 
-      const result =  -k + cost_of_swims;
+      const result =  -b + cost_of_swims;
 
       resultWrapper.classList.remove("result-amount", "result-sentence");
 
@@ -208,11 +254,11 @@
 
         explanation1.textContent = `Total owing = -(current balance)`;
 
-        if (k > 0) {
-          explanation2.textContent = `= -\$${k}`;
+        if (b > 0) {
+          explanation2.textContent = `= -\$${b}`;
         }
         else {
-          explanation2.textContent = `= \$${-k}`;
+          explanation2.textContent = `= \$${-b}`;
         }
 
         if (n1 > 0) {
@@ -232,14 +278,14 @@
         resultWrapper.classList.add("result-sentence");
         resultDisplay.textContent = `Nothing owing, and no new swims to pay for... 🤔`;
 
-        explanation1.textContent = `Your current balance = ` + formatCurrency(k);
+        explanation1.textContent = `Your current balance = ` + formatCurrency(b);
         explanation2.textContent = ``;
       }
       else {
         resultWrapper.classList.add("result-sentence");
         resultDisplay.textContent = `You already have enough in your balance for that. 🙂`;
 
-        explanation1.textContent = `(Your current balance) ` + formatCurrency(k);
+        explanation1.textContent = `(Your current balance) ` + formatCurrency(b);
 
         if (result == 0) {
           explanation1.textContent += ` = `;
@@ -249,9 +295,9 @@
           explanation1.textContent += ` > `;
         }
 
-        explanation1.textContent += formatCurrency(cost_of_swims) + ` (Cost of swims)`
+        explanation1.textContent += formatCurrency(cost_of_swims) + ` (Cost of swims)`;
 
-        explanation2.textContent = `Cost of swims = `
+        explanation2.textContent = `Cost of swims = `;
 
         if (n1 > 0) {
           explanation2.textContent += `${n1} x \$${c1}`;
@@ -266,6 +312,7 @@
         }
       }
 
+      localStorage.setItem("b", bInput.value);
       localStorage.setItem("n1", n1Input.value);
       localStorage.setItem("n2", n2Input.value);
     }
@@ -285,22 +332,76 @@
       }
     }
 
-    function sanitizePaste(e) {
+    function blockNonDecimals(e) {
+      const value = e.target.value;
+
+      // Allow control keys
+      if (
+        e.ctrlKey || e.metaKey ||
+        ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)
+      ) {
+        return;
+      }
+
+      // Allow digits
+      if (/^\d$/.test(e.key)) {
+        // If there's already a decimal, check digits after it
+        const [_, fraction = ''] = value.split('.');
+        if (value.includes('.') && fraction.length >= 2 && e.target.selectionStart > value.indexOf('.')) {
+          e.preventDefault(); // block if more than 2 decimal places
+        }
+        return;
+      }
+
+      // Allow one '.'
+      if (e.key === '.' && !value.includes('.')) {
+        return;
+      }
+
+      // Block anything else
+      e.preventDefault();
+    }
+
+
+    function sanitizeIntigerPaste(e) {
       const pasted = (e.clipboardData || window.clipboardData).getData('text');
       if (!/^\d+$/.test(pasted)) {
         e.preventDefault();
       }
     }
 
+    function sanitizeDecimalPaste(e) {
+      const pasted = (e.clipboardData || window.clipboardData).getData('text');
+
+      // Get current value and cursor position
+      const input = e.target;
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+
+      // Simulate the value after paste
+      const nextValue = input.value.slice(0, start) + pasted + input.value.slice(end);
+
+      // Validate that result has at most one '.' and up to two decimal places
+      if (!/^\d*(\.\d{0,2})?$/.test(nextValue)) {
+        e.preventDefault();
+      }
+    }
+
     [n1Input, n2Input].forEach(input => {
       input.addEventListener("keydown", blockNonDigits);
-      input.addEventListener("paste", sanitizePaste);
+      input.addEventListener("paste", sanitizeIntigerPaste);
       input.addEventListener("input", updateResult);
     });
 
+    bInput.addEventListener("keydown", blockNonDecimals);
+    bInput.addEventListener("paste", sanitizeDecimalPaste);
+    bInput.addEventListener("input", updateResult);
+
+    const savedB = localStorage.getItem("b");
     const savedN1 = localStorage.getItem("n1");
     const savedN2 = localStorage.getItem("n2");
 
+    if (savedB !== null) bInput.value = savedB;
     if (savedN1 !== null) n1Input.value = savedN1;
     if (savedN2 !== null) n2Input.value = savedN2;
 
