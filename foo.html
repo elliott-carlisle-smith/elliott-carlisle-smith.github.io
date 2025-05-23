@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+
+    .balance-input {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 0.5em;
+      margin-bottom: 3.5em;
+    }
+
+   .balance-input input:focus {
+      outline: 2px solid black;
+      outline-offset: 2px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .input-wrapper input {
+      padding: 0.5em 0.5em 0.5em 1em;
+      width: 6ch;
+      font-size: 1.1em;
+      border: 1px solid black;
+      border-radius: 6px;
+      text-align: center;
+      font-family: inherit;
+      /*outline: none;*/ /* remove default blue ring */
+    }
+
+    .input-wrapper .dollar-sign {
+      position: absolute;
+      left: 0.5em;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1em;
+      font-weight: 500;
+      pointer-events: none;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="balance-input">
+    <div class="input-wrapper">
+      <span class="dollar-sign">$</span>
+      <input type="text" id="b" inputmode="decimal" placeholder="0.00" autocomplete="off"/>
+    </div>
+  </div>
+</body>
+</html>

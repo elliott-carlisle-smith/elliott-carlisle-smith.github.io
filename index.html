@@ -50,30 +50,38 @@
       margin-top: 0.5em;
       margin-bottom: 3.5em;
     }
-    .balance-input input {
+
+   .balance-input input:focus {
+      outline: 2px solid black;
+    }
+
+    .balance-input-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .balance-input-wrapper input {
+      padding: 0.5em 0.5em 0.5em 1em; /* top, right, bottom, left */
       width: 6ch;
-      padding: 0.5em;
       font-size: 1.1em;
       border: 1px solid black;
       border-radius: 6px;
-      text-align: center;
+      text-align: center; /* to align text after dollar sign */
       font-family: inherit;
     }
 
-   .balance-input input:focus {
-      border-color: black;
-    }
-
-    .swim-input-group input:focus {
-      border-color: var(--AM-dark-blue);
-    }
-
-    .dollar-sign {
+    .balance-input-wrapper .dollar-sign {
+      position: absolute;
+      left: 0.5em;
+      top: 50%;
+      transform: translateY(-50%);
       font-size: 1.1em;
-      margin-bottom: 0.3em;
-      margin-right: 0.3em;
       font-weight: 500;
+      pointer-events: none;
+      color: #333;
     }
+
+
     .swim-input-row {
       display: flex;
       justify-content: center;     /* centers the row horizontally */
@@ -95,6 +103,12 @@
       border-radius: 6px;
       text-align: center;
     }
+
+    .swim-input-group input:focus {
+      border: 1px solid var(--AM-dark-blue);
+      outline: 2px solid var(--AM-dark-blue);
+    }
+
     label {
       margin-bottom: 0.3em;
       font-weight: 500;
@@ -182,8 +196,10 @@
   <div class="intro-line">Current balance</div>
 
   <div class="balance-input">
-    <span class="dollar-sign">$</span>
-    <input type="text" id="b" inputmode="decimal" placeholder="0.00" autocomplete="off"/>
+    <div class="balance-input-wrapper">
+      <span class="dollar-sign">$</span>
+      <input type="text" id="b" inputmode="decimal" placeholder="0.00" autocomplete="off"/>
+    </div>
   </div>
 
   <div class="intro-line">How many future training sessions would you like your account balance to be ready for?</div>
