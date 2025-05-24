@@ -235,12 +235,29 @@
       }
     }
 
+    function removeLeadingDollar(str) {
+
+      if (str ? !str.includes('$') : true) {
+        return str;
+      }
+
+      if (str.startsWith('$')) {
+        return str.slice(1);
+      }
+
+      if (str.startsWith('-$')) {
+        return '-' + str.slice(2);
+      }
+
+      return str;
+    }
+
     function initialiseB() {
       const params = new URLSearchParams(window.location.search);
 
       const bValue = params.get("balance");
 
-      const bRaw = parseFloat(bValue);
+      const bRaw = Number(removeLeadingDollar(bValue));
 
       if (!isNaN(bRaw) && valueIsDecimalCurrency(bRaw))
       {
