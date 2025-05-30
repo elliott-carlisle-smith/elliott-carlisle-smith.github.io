@@ -75,7 +75,7 @@
       align-items: flex-start;
       gap: 5rem;
       margin: 1.2rem auto;
-      width: fit-content;
+      /*width: fit-content;*/
     }
     .swim-input-group {
       display: flex;
@@ -177,7 +177,7 @@
   <br />
   <div class="intro-line">Current balance</div>
 
-  <div class="balance-input">
+  <div class="balance-input" translate="no">
     <div class="balance-input-wrapper">
       <span class="dollar-sign">$</span>
       <input type="text" id="b" inputmode="decimal" placeholder="0.00" autocomplete="off"/>
@@ -188,24 +188,24 @@
 
   <div class="swim-input-row">
     <div class="swim-input-group">
-      <label for="n1">St Peter's</label>
+      <label for="n1" translate="no">St Peter's</label>
       <input type="text" id="n1" inputmode="numeric" pattern="[0-9]*" placeholder="# swims" autocomplete="off"/>
     </div>
     <div class="swim-input-group">
-      <label for="n2">Burnside</label>
+      <label for="n2" translate="no">Burnside</label>
       <input type="text" id="n2" inputmode="numeric" pattern="[0-9]*" placeholder="# swims" autocomplete="off" />
     </div>
   </div>
   <div class="result-wrapper" id="result-wrapper">
-    <div id="result"></div>
-    <button id="copyButton" title="Copy payment due amount to clipboard" aria-label="Copy payment due amount to clipboard">📋 Copy</button>
+    <div id="result" translate="no"></div>
+    <button id="copyButton" title="Copy payment due amount to clipboard" aria-label="Copy payment due amount to clipboard" translate="no">📋 Copy</button>
   </div>
 
   <br />
-  <div class="explanation" id="explanation1"></div>
+  <div class="explanation" id="explanation1" translate="no"></div>
 
   <br />
-  <div class="explanation" id="explanation2"></div>
+  <div class="explanation" id="explanation2" translate="no"></div>
 
   <script>
     const bInput = document.getElementById("b");
