@@ -256,6 +256,11 @@
 
       const bValue = params.get("balance");
 
+      if (bValue == null)
+      {
+        return;
+      }
+
       const bRaw = Number(removeLeadingDollar(bValue));
 
       if (!isNaN(bRaw) && valueIsDecimalCurrency(bRaw))
@@ -281,7 +286,7 @@
 
       const cost_of_swims = c1 * n1 + c2 * n2;
 
-      const result =  -b + cost_of_swims;
+      const result = Number((-b + cost_of_swims).toFixed(2));
 
       resultWrapper.classList.remove("result-amount", "result-sentence");
 
